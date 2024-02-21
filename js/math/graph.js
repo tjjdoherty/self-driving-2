@@ -4,6 +4,10 @@ class Graph {
         this.segments = segments;
     }
 
+    addPoint(point) {
+        this.points.push(point);
+    }
+
     // simple draw method: loop through each segment in the segments array and draw on the canvas context
 
     draw(ctx) {

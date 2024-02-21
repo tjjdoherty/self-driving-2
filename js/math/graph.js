@@ -8,9 +8,23 @@ class Graph {
         this.points.push(point);
     }
 
-    // simple draw method: loop through each segment in the segments array and draw on the canvas context
+    containsPoint(point) {
+        return this.points.find((p) => p.equals(point)); // loops through array of points 'p' and sees if given 'point' equals any point in that array. we don't want 2 points in the same coordinates.
+    }
 
-    draw(ctx) {
+    tryAddPoint(point) {
+        if (!this.containsPoint(point)) { // we don't add the point to the graph point array until we check that it isn't the same coordinates as something already there (containsPoint)
+            this.addPoint(point);
+            return true;
+        }
+        return false;
+    }
+
+    addSegment(seg) {
+        this.segments.push(seg);
+    }
+
+    draw(ctx) { // simple draw method: loop through each segment in the segments array and draw on the canvas context
         for (const seg of this.segments) {
             seg.draw(ctx);
         }

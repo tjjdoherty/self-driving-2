@@ -24,6 +24,18 @@ class Graph {
         this.segments.push(seg);
     }
 
+    containsSegment(seg) {
+        return this.segments.find((s) => s.equals(seg)); // stops adding segments between points where there is already a segment - checks p1 -> p2 and p2 -> p1
+    }
+
+    tryAddSegment(seg) {
+        if (!this.containsSegment(seg)) {
+            this.addSegment(seg);
+            return true;
+        }
+        return false;
+    }
+
     draw(ctx) { // simple draw method: loop through each segment in the segments array and draw on the canvas context
         for (const seg of this.segments) {
             seg.draw(ctx);

@@ -22,8 +22,7 @@
                 const index2 = Math.floor(Math.random() * graph.points.length);
                 let success = false;
                 if (index1 != index2) {
-                    success = true;
-                    graph.addSegment(
+                    success = graph.tryAddSegment(
                         new Segment(graph.points[index1], graph.points[index2]) // this is the adding of the segment with the two points found from the existing array
                     );
                 }
@@ -37,7 +36,7 @@
                 const success = graph.tryAddPoint(
                     new Point(
                         Math.random() * myCanvas.width,
-                        Math.random() * myCanvas.height
+                        Math.random() * myCanvas.height // new point with completely random x and y coordinates
                     )
                 );
                 ctx.clearRect(0, 0, myCanvas.width, myCanvas.height); // to see the point after it's added you need to refresh the canvas - clearRect, the four arguments being the entire boundary of it

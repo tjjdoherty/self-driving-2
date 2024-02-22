@@ -20,13 +20,9 @@
             function addRandomSegment() {
                 const index1 = Math.floor(Math.random() * graph.points.length); // pull a random point from the entire length of the array of points
                 const index2 = Math.floor(Math.random() * graph.points.length);
-                let success = false;
-                if (index1 != index2) {
-                    success = graph.tryAddSegment(
+                const success = graph.tryAddSegment(
                         new Segment(graph.points[index1], graph.points[index2]) // this is the adding of the segment with the two points found from the existing array
                     );
-                }
-                
                 ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
                 graph.draw(ctx);
                 console.log(success);

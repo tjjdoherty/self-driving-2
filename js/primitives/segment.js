@@ -9,7 +9,7 @@ class Segment {
     }
 
     includes(point) {
-        return this.p1.equals(point) || this.p2.equals(point); // this helps clean up the equals function for later.
+        return this.p1.equals(point) || this.p2.equals(point); // this helper function clean up the equals function for later. Checks (p1, p2) and (p2, p1) segment match
     }
 
     draw(ctx, width = 2, color = "black") {

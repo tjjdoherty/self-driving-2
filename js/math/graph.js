@@ -25,11 +25,11 @@ class Graph {
     }
 
     containsSegment(seg) {
-        return this.segments.find((s) => s.equals(seg)); // stops adding segments between points where there is already a segment - checks p1 -> p2 and p2 -> p1
+        return this.segments.find((s) => s.equals(seg)); // stops adding segments between points where there is already a segment with both points
     }
 
     tryAddSegment(seg) {
-        if (!this.containsSegment(seg)) {
+        if (!this.containsSegment(seg) && !seg.p1.equals(seg.p2)) {
             this.addSegment(seg);
             return true;
         }

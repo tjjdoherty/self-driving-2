@@ -15,6 +15,7 @@
             <button onClick="clearAll()">Clear All</button>
         </div>
 
+        <script src="js/graphEditor.js"></script>
         <script src="js/math/graph.js"></script>
         <script src="js/primitives/point.js"></script>
         <script src="js/primitives/segment.js"></script>
@@ -89,7 +90,16 @@
 
 
             const graph = new Graph([p1, p2, p3, p4], [s1, s2, s3, s4]);
-            graph.draw(ctx);
+            const graphEditor = new GraphEditor(myCanvas, graph);
+
+            animate(); // replaces the graph draw, calls the graph editor which calls the graph we've already set up
+
+            function animate() {
+                ctx.clearRect(0, 0, myCanvas.width, myCanvas.height); // it's essentially a recurring animation loop, requests a refresh in the browser 60 times per second (60fps)
+                graphEditor.display();
+                requestAnimationFrame(animate); // refreshes the animation 60 fps - what this means is if you typed p1.x = 400 into the browser console, it would immediately update
+                //  it is constantly re-rendering
+            }
 
         </script>
     </body>

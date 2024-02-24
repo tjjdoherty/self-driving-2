@@ -36,6 +36,10 @@ class Graph {
         return false;
     }
 
+    removeSegment(seg) {
+        this.segments.splice(this.segments.indexOf((seg), 1)); // splice is very powerful, with just two arguments it will remove the segment matching the index of seg, and only remove one item 
+    }
+
     draw(ctx) { // simple draw method: loop through each segment in the segments array and draw on the canvas context
         for (const seg of this.segments) {
             seg.draw(ctx);

@@ -58,6 +58,11 @@ class Graph {
         return segs;
     }
 
+    dispose() { // dispose of the graph entirely. Literally the graph will now reaed empty arrays so have nothing to draw on the canvas.
+        this.points.length = 0;
+        this.segments.length = 0;
+    }
+
     draw(ctx) { // simple draw method: loop through each segment in the segments array and draw on the canvas context
         for (const seg of this.segments) {
             seg.draw(ctx);

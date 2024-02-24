@@ -12,6 +12,7 @@
             <button onClick="removeRandomPoint()">Remove Point</button>
             <button onClick="addRandomSegment()">Add Segment</button>
             <button onClick="removeRandomSegment()">Remove Segment</button>
+            <button onClick="clearAll()">Clear All</button>
         </div>
 
         <script src="js/math/graph.js"></script>
@@ -19,6 +20,12 @@
         <script src="js/primitives/segment.js"></script>
 
         <script>
+            function clearAll() {
+                graph.dispose();
+                ctx.clearRect(0, 0, myCanvas.width, myCanvas.height); // this and the graph.draw(ctx) must be used after every operation to change the graph or we won't see the update.
+                graph.draw(ctx);
+            }
+
             function removeRandomPoint() {
                 if (graph.points.length == 0) {
                     console.log("No Points to remove");

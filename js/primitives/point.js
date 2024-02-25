@@ -17,7 +17,7 @@ class Point {
         if (outline) {
             ctx.beginPath();
             ctx.lineWidth = 2;
-            ctx.strokeStyle = "yellow";
+            ctx.strokeStyle = "white";
             ctx.arc(this.x, this.y, rad * 0.6, 0, Math.PI * 2);
             ctx.stroke();
         }

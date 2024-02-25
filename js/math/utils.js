@@ -1,4 +1,4 @@
-function getNearestPoint(loc, points, threshold = Number.MAX_SAFE_INTEGER) { // get the point closest to where the mouse click location was, threshold which is updated in graphEditor
+function getNearestPoint(loc, points, threshold = Number.MAX_SAFE_INTEGER) { // get the point closest to where the mouse click location was, threshold is max by default but overwritten in graphEditor.js
     let minDist = Number.MAX_SAFE_INTEGER; // start by initializing to an extremely large number - just reassign after that
     let nearest = null;
     for (const point of points) {

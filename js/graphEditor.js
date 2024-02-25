@@ -22,10 +22,18 @@ class GraphEditor {
             this.graph.addPoint(mouse);
             this.selected = mouse;
         });
+
+        this.canvas.addEventListener("mousemove", (event) => {
+            const mouse = new Point(event.offsetX, event.offsetY); // mousemove event is used to hover over points without any click, same x/y coordinate logic as mousedown
+            this.hovered = getNearestPoint(mouse, this.graph.points, 14); // so you'll know if you click here whether it'll create a new point or highlight an existing one
+        });
     }
 
     display() {
         this.graph.draw(this.ctx);
+        if (this.hovered) {
+            this.hovered.draw(this.ctx, { fill: true });
+        }
         if (this.selected) {
             this.selected.draw(this.ctx, { outline: true }); // pass properties in an object, see point.js
         }

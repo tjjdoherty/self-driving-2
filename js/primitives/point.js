@@ -8,7 +8,7 @@ class Point {
         return this.x == point.x && this.y == point.y;
     }
 
-    draw(ctx, { size = 18, color = "black", outline = false } = {} ) { // the more props a method has, the harder it is to remember the order... pass them as an object, you just name specific ones you need
+    draw(ctx, { size = 18, color = "black", outline = false, fill = false } = {} ) { // the more props a method has, the harder it is to remember the order... pass them as an object, you just name specific ones you need
         const rad = size / 2;
         ctx.beginPath();
         ctx.fillStyle = color;
@@ -20,6 +20,12 @@ class Point {
             ctx.strokeStyle = "white";
             ctx.arc(this.x, this.y, rad * 0.6, 0, Math.PI * 2);
             ctx.stroke();
+        }
+        if (fill) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, rad * 0.5, 0, Math.PI * 2);
+            ctx.fillStyle = "white";
+            ctx.fill();
         }
     }
     /* arc takes FIVE arguments, sixth optional counterclockwise: x, y, radius, startAngle, endAngle, counterclockwise

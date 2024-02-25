@@ -8,10 +8,6 @@
         <h1>World Editor</h1>
         <canvas id="myCanvas"></canvas>
         <div id="controls">
-            <button onClick="addRandomPoint()">Add Point</button>
-            <button onClick="removeRandomPoint()">Remove Point</button>
-            <button onClick="addRandomSegment()">Add Segment</button>
-            <button onClick="removeRandomSegment()">Remove Segment</button>
             <button onClick="clearAll()">Clear All</button>
         </div>
 
@@ -26,52 +22,6 @@
                 graph.dispose();
                 ctx.clearRect(0, 0, myCanvas.width, myCanvas.height); // this and the graph.draw(ctx) must be used after every operation to change the graph or we won't see the update.
                 graph.draw(ctx);
-            }
-
-            function removeRandomPoint() {
-                if (graph.points.length == 0) {
-                    console.log("No Points to remove");
-                    return;
-                }
-                const index = Math.floor(Math.random() * graph.points.length);
-                graph.removePoint(graph.points[index]);
-                ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-                graph.draw(ctx);
-            }
-                        
-            function removeRandomSegment() {
-                if (graph.segments.length == 0) {
-                    console.log("No Segments to remove");
-                    return;
-                }
-                const index = Math.floor(Math.random() * graph.segments.length);
-                graph.removeSegment(graph.segments[index]);
-                ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-                graph.draw(ctx);
-                
-            }
-
-            function addRandomSegment() {
-                const index1 = Math.floor(Math.random() * graph.points.length); // pull a random point from the entire length of the array of points
-                const index2 = Math.floor(Math.random() * graph.points.length);
-                const success = graph.tryAddSegment(
-                        new Segment(graph.points[index1], graph.points[index2]) // this is the adding of the segment with the two points found from the existing array
-                    );
-                ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-                graph.draw(ctx);
-                console.log(success);
-            }
-
-            function addRandomPoint() {
-                const success = graph.tryAddPoint(
-                    new Point(
-                        Math.random() * myCanvas.width,
-                        Math.random() * myCanvas.height // new point with completely random x and y coordinates
-                    )
-                );
-                ctx.clearRect(0, 0, myCanvas.width, myCanvas.height); // to see the point after it's added you need to refresh the canvas - clearRect, the four arguments being the entire boundary of it
-                graph.draw(ctx);
-                console.log(success);
             }
 
             myCanvas.width = 600;

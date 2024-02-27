@@ -17,6 +17,16 @@ class Viewport {
         this.#addEventListeners();
     }
 
+    reset() {
+        this.ctx.restore(); // restore after changes is needed. otherwise for example, the zoom out will just "fly away"
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // it's essentially a recurring animation loop, requests a refresh in the browser 60 times per second (60fps)
+        this.ctx.save();
+        this.ctx.translate(this.center.x, this.center.y);
+        this.ctx.scale(1 / this.zoom, 1 / this.zoom);
+        const offset = this.getOffset();
+        this.ctx.translate(offset.x, offset.y); // this and the line above keep updating and animating the canvas as you pan - live panning not just after the click up
+    }
+
     getMouse(event) {
         return new Point(
             (event.offsetX - this.center.x) * this.zoom - this.offset.x, // this.offset.x and y updates the mouse position after panning so the new Point draws are in the right place

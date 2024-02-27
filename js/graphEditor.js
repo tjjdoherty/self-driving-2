@@ -67,6 +67,12 @@ class GraphEditor {
         }
     }
 
+    dispose() { // dispose of the graph entirely. Literally the graph will now reaed empty arrays so have nothing to draw on the canvas.
+        this.graph.dispose();
+        this.selected = null;
+        this.hovered = null;
+    }
+
     display() {
         this.graph.draw(this.ctx);
         if (this.hovered) {

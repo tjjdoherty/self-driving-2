@@ -8,7 +8,8 @@
         <h1>World Editor</h1>
         <canvas id="myCanvas"></canvas>
         <div id="controls">
-            <button onClick="clearAll()">Clear All</button>
+            <button onClick="dispose()">🗑</button>
+            <button onClick="save()">💾</button>
         </div>
 
         <script src="js/graphEditor.js"></script>
@@ -19,12 +20,6 @@
         <script src="js/primitives/segment.js"></script>
 
         <script>
-            function clearAll() {
-                graph.dispose();
-                ctx.clearRect(0, 0, myCanvas.width, myCanvas.height); // this and the graph.draw(ctx) must be used after every operation to change the graph or we won't see the update.
-                graph.draw(ctx);
-            }
-
             myCanvas.width = 600;
             myCanvas.height = 600;
 
@@ -51,6 +46,14 @@
                 viewport.reset();
                 graphEditor.display();
                 requestAnimationFrame(animate); // refreshes the animation 60 fps - the canvas is constantly re-rendering
+            }
+
+            function dispose() {
+                graphEditor.dispose();
+            }
+
+            function save() {
+                localStorage.setItem("graph", JSON.stringify(graph)); // local storage only works with strings.
             }
 
         </script>

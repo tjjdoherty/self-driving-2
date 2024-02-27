@@ -50,8 +50,10 @@
             function animate() {
                 ctx.clearRect(0, 0, myCanvas.width, myCanvas.height); // it's essentially a recurring animation loop, requests a refresh in the browser 60 times per second (60fps)
                 ctx.save();
+                ctx.translate(viewport.center.x, viewport.center.y);
                 ctx.scale(1 / viewport.zoom, 1 / viewport.zoom);
-                ctx.translate(viewport.offset.x, viewport.offset.y); // this translate function is what takes the viewport offset and puts it into the graph
+                const offset = viewport.getOffset();
+                ctx.translate(offset.x, offset.y); // this and the line above keep updating and animating the canvas as you pan - live panning not just after the click up
                 graphEditor.display();
                 ctx.restore(); // need to restore after otherwise the zoom out will just "fly away"
                 requestAnimationFrame(animate); // refreshes the animation 60 fps - the canvas is constantly re-rendering

@@ -4,7 +4,8 @@ class Viewport {
         this.ctx = canvas.getContext("2d");
 
         this.zoom = 1;
-        this.offset = new Point(0, 0); // initializing the location of where you are panning to on the canvas
+        this.center = new Point(canvas.width / 2, canvas.height / 2); 
+        this.offset = scale(this.center, -1); // this just inverts the offset of the middle of the canvas so our points are in view when we start
 
         this.pan = {
             start: new Point(0,0),
@@ -18,9 +19,13 @@ class Viewport {
 
     getMouse(event) {
         return new Point(
-            event.offsetX * this.zoom,
-            event.offsetY * this.zoom
+            (event.offsetX - this.center.x) * this.zoom - this.offset.x, // this.offset.x and y updates the mouse position after panning so the new Point draws are in the right place
+            (event.offsetY - this.center.y) * this.zoom - this.offset.y
         );
+    }
+
+    getOffset() {
+        return add(this.offset, this.pan.offset);
     }
 
     #addEventListeners() {

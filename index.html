@@ -41,7 +41,7 @@
             const s4 = new Segment(p2, p3);
 
 
-            const graph = new Graph([p1, p2, p3, p4], [s1, s2, s3, s4]);
+            const graph = new Graph([p1, p2, p3, p4], [s1, s2, s3, s4]); // the graph stores the coordinates
             const viewport = new Viewport(myCanvas);
             const graphEditor = new GraphEditor(viewport, graph); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
 
@@ -51,6 +51,7 @@
                 ctx.clearRect(0, 0, myCanvas.width, myCanvas.height); // it's essentially a recurring animation loop, requests a refresh in the browser 60 times per second (60fps)
                 ctx.save();
                 ctx.scale(1 / viewport.zoom, 1 / viewport.zoom);
+                ctx.translate(viewport.offset.x, viewport.offset.y); // this translate function is what takes the viewport offset and puts it into the graph
                 graphEditor.display();
                 ctx.restore(); // need to restore after otherwise the zoom out will just "fly away"
                 requestAnimationFrame(animate); // refreshes the animation 60 fps - the canvas is constantly re-rendering

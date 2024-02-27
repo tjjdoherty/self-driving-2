@@ -12,6 +12,7 @@
         </div>
 
         <script src="js/graphEditor.js"></script>
+        <script src="js/viewport.js"></script>
         <script src="js/math/utils.js"></script>
         <script src="js/math/graph.js"></script>
         <script src="js/primitives/point.js"></script>
@@ -41,15 +42,18 @@
 
 
             const graph = new Graph([p1, p2, p3, p4], [s1, s2, s3, s4]);
-            const graphEditor = new GraphEditor(myCanvas, graph);
+            const viewport = new Viewport(myCanvas);
+            const graphEditor = new GraphEditor(viewport, graph); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
 
             animate(); // replaces the graph draw, calls the graph editor which calls the graph we've already set up
 
             function animate() {
                 ctx.clearRect(0, 0, myCanvas.width, myCanvas.height); // it's essentially a recurring animation loop, requests a refresh in the browser 60 times per second (60fps)
+                ctx.save();
+                ctx.scale(1 / viewport.zoom, 1 / viewport.zoom);
                 graphEditor.display();
-                requestAnimationFrame(animate); // refreshes the animation 60 fps - what this means is if you typed p1.x = 400 into the browser console, it would immediately update
-                //  it is constantly re-rendering
+                ctx.restore(); // need to restore after otherwise the zoom out will just "fly away"
+                requestAnimationFrame(animate); // refreshes the animation 60 fps - the canvas is constantly re-rendering
             }
 
         </script>

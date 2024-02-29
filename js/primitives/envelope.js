@@ -1,5 +1,5 @@
 class Envelope {
-    constructor(skeleton, width, roundness = 10) {
+    constructor(skeleton, width, roundness = 0) {
         this.skeleton = skeleton; // this is called storing as an attribute
         this.poly = this.#generatePolygon(width, roundness);
     }
@@ -13,11 +13,13 @@ class Envelope {
         const alpha_ccw = alpha - Math.PI / 2; // these are points that are offset by 90 degrees clockwide and counter-clockwise from the original point
 
         const points = [];
-        const step = Math.PI / Math.max(1, roundness); // roundness is how many points around the end of the point we will make to round the road off
-        for (let i = alpha_ccw; i <= alpha_cw; i += step) {
-            points.push(translate(p1, i, radius)); // we are creating additional points around the ends of the points to round off the roads, PI is for the semi circular arc
+        const step = Math.PI / Math.max(1, roundness); // roundness is how many points around the end of the point we will make to round the road off, PI is the semicircular arc
+        const eps = step / 2; // just a basic epsilon value because floating point imprecision sometimes means the last i value isn't reached
+        
+        for (let i = alpha_ccw; i <= alpha_cw + eps; i += step) {
+            points.push(translate(p1, i, radius));
         }
-        for (let i = alpha_ccw; i <= alpha_cw; i += step) {
+        for (let i = alpha_ccw; i <= alpha_cw + eps; i += step) {
             points.push(translate(p2, Math.PI + i, radius)); // for p2 its on the other side of the polygon so 180 degrees different (PI + i)
         }
 

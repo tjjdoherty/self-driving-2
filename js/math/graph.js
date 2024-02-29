@@ -4,6 +4,16 @@ class Graph {
         this.segments = segments;
     }
 
+    static load(info) { // this was created to take the JSON string in localStorage back into a usable format for the graph to be drawn for the graphEditor.
+        const points = info.points.map((i) => new Point(i.x, i.y)); // creating new points straight from the JSON info
+        const segments = info.segments.map((i) => new Segment(
+            points.find((p) => p.equals(i.p1)), // another problem - p1 and p2 points in local storage are not points, theyre just objects with x and y properties
+            points.find((p) => p.equals(i.p2)) // we need to find the corresponding points from the points array
+        ));
+        
+        return new Graph(points, segments);
+    }
+
     addPoint(point) {
         this.points.push(point);
     }

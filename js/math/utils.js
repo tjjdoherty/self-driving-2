@@ -26,3 +26,14 @@ function subtract(p1, p2) {
 function scale(p, scaler) {
     return new Point(p.x * scaler, p.y * scaler);
 }
+
+function translate(location, angle, offset) {
+    return new Point(
+        location.x + Math.cos(angle) * offset, // this is the trigonometric circle, with x coordinate we use cosine
+        location.y + Math.sin(angle) * offset // with y coordinate its the sine
+    );
+}
+
+function angle(p) {
+    return Math.atan2(p.y, p.x); // arc tangent method, used in envelope to subtract p2.x from p1.x and p2.y from p1.y
+}

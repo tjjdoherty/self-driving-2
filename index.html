@@ -12,6 +12,7 @@
             <button onClick="save()">💾</button>
         </div>
 
+        <script src="js/world.js"></script>
         <script src="js/graphEditor.js"></script>
         <script src="js/viewport.js"></script>
         <script src="js/math/utils.js"></script>
@@ -32,6 +33,8 @@
             const graph = graphInfo
                 ? Graph.load(graphInfo) // we can't just add the segs and points from localstorage, it's just a string -- need load as a new method in graph
                 : new Graph();
+            const world = new World(graph);
+
             const viewport = new Viewport(myCanvas);
             const graphEditor = new GraphEditor(viewport, graph); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
 
@@ -39,8 +42,9 @@
 
             function animate() {
                 viewport.reset();
+                world.generate();
+                world.draw(ctx); // we instantiate and draw the world before the graph Editor so that we see the editor tools on top of it
                 graphEditor.display();
-                new Envelope(graph.segments[0], 80).draw(ctx);
                 requestAnimationFrame(animate); // refreshes the animation 60 fps - the canvas is constantly re-rendering
             }
 

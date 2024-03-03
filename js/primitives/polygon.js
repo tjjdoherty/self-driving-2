@@ -8,6 +8,14 @@ class Polygon {
             )
         }
     }
+    
+    static multiBreak(polygons) { // going through the array of polygons and finding the intersection breaks between each one.
+        for (let i = 0; i < polygons.length - 1; i++) {
+            for (let j = i + 1; j < polygons.length; j++) {
+                Polygon.break(polygons[i], polygons[j]);
+            }
+        }
+    }
 
     static break(poly1, poly2) { // this method breaks the segments of each polygon at their intersection points
         const segs1 = poly1.segments;

@@ -62,3 +62,8 @@ function lerp(A,B,t) {
     // t is a percentage between the start point A and endpoint B
     return (A + (B-A) * t);
 }
+
+function getRandomColor() {
+    const hue = 290 + Math.random() * 260;
+    return "hsl(" + hue + ", 100%, 60%)";
+}

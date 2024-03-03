@@ -9,10 +9,9 @@ class Polygon {
         }
     }
 
-    static break(poly1, poly2) {
+    static break(poly1, poly2) { // this method breaks the segments of each polygon at their intersection points
         const segs1 = poly1.segments;
         const segs2 = poly2.segments;
-        const intersections = [];
         for (let i = 0; i < segs1.length; i++) {
             for (let j = 0; j < segs2.length; j++) {
                 const int = getIntersection(
@@ -21,11 +20,22 @@ class Polygon {
 
                 if (int && int.offset != 1 && int.offset != 0) {
                     const point = new Point(int.x, int.y);
-                    intersections.push(point)
+                    let aux = segs1[i].p2; // this is keeping the original segment end point for making a new segment from where the intersection begins
+                    segs1[i].p2 = point;
+                    segs1.splice(i + 1, 0, new Segment(point, aux)); // we are just inserting a new segment between where the intersection of poly1 and poly2 is, and the end of old poly2
+                    
+                    aux = segs2[j].p2; // same with poly2 segments now, we can just re assign aux variable
+                    segs2[j].p2 = point;
+                    segs2.splice(j + 1, 0, new Segment(point, aux));
                 }
-            }
+            } // removed the return intersections - we don't need to return intersection points, we just need break to break up the overlapping area of the polygons
         }
-        return intersections;
+    }
+
+    drawSegments(ctx) {
+        for (const seg of this.segments) {
+            seg.draw(ctx, { color: getRandomColor(), width: 5 })
+        }
     }
 
     draw(ctx, { stroke = "blue", lineWidth = 2, fill = "rgba(0, 0, 255, 0.3)" } = {}) {

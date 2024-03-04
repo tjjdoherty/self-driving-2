@@ -12,14 +12,14 @@ class Polygon {
     static union(polygons) {
         Polygon.multiBreak(polygons);
         const keptSegments = []; // we are now going to isolate the segments that aren't locked inside intersections with other polygons and keep them, removing the overlaps
-        for (let i = 0; i < polygons.length; i++) {
-            for (const seg of polygons[i].segments) {
+        for (let i = 0; i < polygons.length; i++) { // loop through every polygon we have
+            for (const seg of polygons[i].segments) { // for each segment in this specific polygon
                 let keep = true;
                 for (let j = 0; j < polygons.length; j++) {
                     if (i != j) {
                         if (polygons[j].containsSegment(seg)) {
                             keep = false;
-                            this.break;
+                            break;
                         }
                     }
                 }

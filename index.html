@@ -44,6 +44,7 @@
                 viewport.reset();
                 world.generate();
                 world.draw(ctx); // we instantiate and draw the world before the graph Editor so that we see the editor tools on top of it
+                ctx.globalAlpha = 0.3; // editor tools slightly transparent, so you can still see the graph editor but also the road lane markings underneath them
                 graphEditor.display();
                 requestAnimationFrame(animate); // refreshes the animation 60 fps - the canvas is constantly re-rendering
             }

@@ -62,6 +62,17 @@ class Polygon {
         }
     }
 
+    intersectsPoly(polygon) {
+        for (let s1 of this.segments) { // the segments of the polygon which intersectsPoly was applied e.g. POLYGON1.intersectsPoly(polygon2)
+            for (let s2 of polygon.segments) { // the segments of the argument poly e.g. polygon1.intersectsPoly(POLYGON2)
+                if (getIntersection(s1.p1, s1.p2, s2.p1, s2.p2)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     containsSegment(seg) {
         const midPoint = average(seg.p1, seg.p2);
         return this.containsPoint(midPoint);

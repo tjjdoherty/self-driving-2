@@ -4,6 +4,14 @@ class Segment {
         this.p2 = p2;
     }
 
+    length() {
+        return distance(this.p1, this.p2);
+    }
+
+    directionVector() {
+        return normalize(subtract(this.p2, this.p1)); // we aren't getting magnitude with this, just direction, is it -1 or +1?
+    }
+    
     equals(seg) {
         return this.includes(seg.p1) && this.includes(seg.p2); // includes helper method below tests if the point is either at p1 or p2 of the arc
     }

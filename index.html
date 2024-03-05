@@ -38,11 +38,15 @@
             const viewport = new Viewport(myCanvas);
             const graphEditor = new GraphEditor(viewport, graph); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
 
+            let oldGraphHash = graph.hash();
             animate(); // replaces the graph draw, calls the graph editor which calls the graph we've already set up
 
             function animate() {
                 viewport.reset();
-                world.generate();
+                if (graph.hash() != oldGraphHash) {
+                    world.generate();
+                    oldGraphHash = graph.hash();
+                }
                 world.draw(ctx); // we instantiate and draw the world before the graph Editor so that we see the editor tools on top of it
                 ctx.globalAlpha = 0.3; // editor tools slightly transparent, so you can still see the graph editor but also the road lane markings underneath them
                 graphEditor.display();

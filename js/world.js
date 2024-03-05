@@ -16,6 +16,7 @@ class World {
         this.envelopes = [];
         this.roadBorders = [];
         this.buildings = [];
+        this.trees = [];
 
         this.generate();
     }
@@ -30,6 +31,28 @@ class World {
 
         this.roadBorders = Polygon.union(this.envelopes.map((envelope) => envelope.poly));
         this.buildings = this.#generateBuildings();
+        this.trees = this.#generateTrees();
+    }
+
+    #generateTrees(count = 10) {
+        const points = [
+            ...this.roadBorders.map((segment) => [segment.p1, segment.p2]).flat(), 
+            ...this.buildings.map((building) => building.points).flat() // we are using array.map and flat() on segments and buildings to get one giant array of individual points for x and y coordinates
+        ];
+        const left = Math.min(...points.map((point) => point.x)); // left, right, top and bottom are just finding the absolute max and min x and y values to create a zone where trees...
+        const right = Math.max(...points.map((point) => point.x)); // can be randomly placed using the lerp function in the next block (while trees.length < count) below
+        const top = Math.min(...points.map((point) => point.y));
+        const bottom = Math.max(...points.map((point) => point.y));
+
+        const trees = [];
+        while (trees.length < count) {
+            const p = new Point(
+                lerp(left, right, Math.random()), // placement of tree coordinates is random within a specified region using lerp - lerp will return somewhere between the top and bottom for the tree to go
+                lerp(top, bottom, Math.random())  // do this with top & bottom, and left & right, and you have your x and y coordinates within a specific zone for the tree point
+            );
+            trees.push(p);
+        }
+        return trees;
     }
 
     #generateBuildings() {
@@ -101,6 +124,9 @@ class World {
         }
         for (const seg of this.roadBorders) {
             seg.draw(ctx, {color: "white", width: 4 });
+        }
+        for (const tree of this.trees) {
+            tree.draw(ctx);
         }
         for (const building of this.buildings) {
             building.draw(ctx);

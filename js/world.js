@@ -4,7 +4,8 @@ class World {
         roadRoundness = 10,
         buildingWidth = 150,
         buildingMinLength = 150,
-        spacing = 50
+        spacing = 50,
+        treeSize = 90
     ) {
         this.graph = graph;
         this.roadWidth = roadWidth;
@@ -12,6 +13,7 @@ class World {
         this.buildingWidth = buildingWidth;
         this.buildingMinLength = buildingMinLength;
         this.spacing = spacing;
+        this.treeSize = treeSize;
 
         this.envelopes = [];
         this.roadBorders = [];
@@ -44,13 +46,38 @@ class World {
         const top = Math.min(...points.map((point) => point.y));
         const bottom = Math.max(...points.map((point) => point.y));
 
+        const illegalPolys = [
+            ...this.buildings,
+            ...this.envelopes.map((envelope) => envelope.poly)
+        ];
+
         const trees = [];
         while (trees.length < count) {
             const p = new Point(
                 lerp(left, right, Math.random()), // placement of tree coordinates is random within a specified region using lerp - lerp will return somewhere between the top and bottom for the tree to go
                 lerp(top, bottom, Math.random())  // do this with top & bottom, and left & right, and you have your x and y coordinates within a specific zone for the tree point
             );
-            trees.push(p);
+
+            let keep = true;
+            for (const poly of illegalPolys) {
+                if (poly.containsPoint(p) || poly.distanceToPoint(p) < this.treeSize / 2) {
+                    keep = false;
+                    break; // we just need to establish if the point p is within ANY polygon, if yes then it doesn't get plotted and we break
+                }
+            }
+
+            if (keep) {
+                for (const tree of trees) {
+                    if (distance(tree, p) < this.treeSize) { // basically, if this current tree centre point is within the treeSize radius of an existing tree...
+                        keep = false;
+                        break;
+                    }
+                }
+            }
+
+            if (keep) {
+                trees.push(p);
+            }
         }
         return trees;
     }
@@ -126,7 +153,7 @@ class World {
             seg.draw(ctx, {color: "white", width: 4 });
         }
         for (const tree of this.trees) {
-            tree.draw(ctx);
+            tree.draw(ctx, { size: this.treeSize * 0.67, color: "rgba(0, 0, 0, 0.5)" });
         }
         for (const building of this.buildings) {
             building.draw(ctx);

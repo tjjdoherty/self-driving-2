@@ -5,7 +5,7 @@ class World {
         buildingWidth = 150,
         buildingMinLength = 150,
         spacing = 50,
-        treeSize = 90
+        treeSize = 40
     ) {
         this.graph = graph;
         this.roadWidth = roadWidth;
@@ -70,7 +70,7 @@ class World {
 
             if (keep) {
                 for (const tree of trees) {
-                    if (distance(tree, p) < this.treeSize) { // basically, if this current tree centre point is within the treeSize radius of an existing tree...
+                    if (distance(tree.center, p) < this.treeSize) { // basically, if this current tree centre point is within the treeSize radius of an existing tree...
                         keep = false;
                         break;
                     }
@@ -90,7 +90,7 @@ class World {
             }
 
             if (keep) {
-                trees.push(p);
+                trees.push(new Tree(p, this.treeSize));
                 tryCount = 0;
             }
             tryCount++;
@@ -162,7 +162,7 @@ class World {
         return bases;
     }
 
-    draw(ctx) {
+    draw(ctx, viewPoint) {
         for (const env of this.envelopes) {
             env.draw(ctx, { fill: "#BBB", stroke: "#BBB", lineWidth: 15 });
         }
@@ -173,7 +173,7 @@ class World {
             seg.draw(ctx, {color: "white", width: 4 });
         }
         for (const tree of this.trees) {
-            tree.draw(ctx, { size: this.treeSize * 0.67, color: "rgba(0, 0, 0, 0.5)" });
+            tree.draw(ctx, viewPoint); // we don't need the styles for the tree draw anymore as it's stored within the tree.js file
         }
         for (const building of this.buildings) {
             building.draw(ctx);

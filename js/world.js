@@ -36,13 +36,13 @@ class World {
         this.trees = this.#generateTrees();
     }
 
-    #generateTrees(count = 10) {
+    #generateTrees() {
         const points = [
             ...this.roadBorders.map((segment) => [segment.p1, segment.p2]).flat(), 
             ...this.buildings.map((building) => building.points).flat() // we are using array.map and flat() on segments and buildings to get one giant array of individual points for x and y coordinates
         ];
         const left = Math.min(...points.map((point) => point.x)); // left, right, top and bottom are just finding the absolute max and min x and y values to create a zone where trees...
-        const right = Math.max(...points.map((point) => point.x)); // can be randomly placed using the lerp function in the next block (while trees.length < count) below
+        const right = Math.max(...points.map((point) => point.x)); // can be randomly placed using the lerp function in the next block (while tryCount) below
         const top = Math.min(...points.map((point) => point.y));
         const bottom = Math.max(...points.map((point) => point.y));
 
@@ -52,7 +52,9 @@ class World {
         ];
 
         const trees = [];
-        while (trees.length < count) {
+        let tryCount = 0;
+
+        while (tryCount < 50) {
             const p = new Point(
                 lerp(left, right, Math.random()), // placement of tree coordinates is random within a specified region using lerp - lerp will return somewhere between the top and bottom for the tree to go
                 lerp(top, bottom, Math.random())  // do this with top & bottom, and left & right, and you have your x and y coordinates within a specific zone for the tree point
@@ -60,9 +62,9 @@ class World {
 
             let keep = true;
             for (const poly of illegalPolys) {
-                if (poly.containsPoint(p) || poly.distanceToPoint(p) < this.treeSize / 2) {
+                if (poly.containsPoint(p) || poly.distanceToPoint(p) < this.treeSize / 2) { // checking that a tree isn't inside a road / building polygon
                     keep = false;
-                    break; // we just need to establish if the point p is within ANY polygon, if yes then it doesn't get plotted and we break
+                    break;
                 }
             }
 
@@ -75,9 +77,23 @@ class World {
                 }
             }
 
+            // we are checking if the tree is nearby a building or road before placing it - don't waste memory on a tree far away from everything
+            if (keep) {
+                let closeToSomething = false;
+                for (const poly of illegalPolys) {
+                    if (poly.distanceToPoint(p) < this.treeSize * 4) {
+                        closeToSomething = true;
+                        break;
+                    }
+                }
+                keep = closeToSomething;
+            }
+
             if (keep) {
                 trees.push(p);
+                tryCount = 0;
             }
+            tryCount++;
         }
         return trees;
     }
@@ -100,7 +116,7 @@ class World {
             const seg = guides[i];
             if (seg.length() < this.buildingMinLength) {
                 guides.splice(i, 1); // if this segment is smaller than the building minimum length to place something, remove it from the guides array
-                i--; // have to push i back one because we've removed an item, if we keep i the same and delete an element we'll have the new one in the same space
+                i--; // push i back one because we've removed an item, it will i++ when we re-loop and we'll have the new element in the same index
             }
         }
 
@@ -132,7 +148,10 @@ class World {
 
         for (let i = 0; i < bases.length; i++) {
             for (let j = i + 1; j < bases.length; j++) {
-                if (bases[i].intersectsPoly(bases[j])) { // checking if base i and j clash with one another, intersectsPoly is in polygon.js
+                if (
+                    bases[i].intersectsPoly(bases[j]) || 
+                    bases[i].distanceToPoly(bases[j]) < this.spacing
+                ) { // checking if base i and j clash with one another, intersectsPoly is in polygon.js
                     bases.splice(j, 1);
                     j--;
                 }

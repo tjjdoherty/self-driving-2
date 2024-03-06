@@ -30,7 +30,7 @@ class Segment {
         return Math.min(distToP1, distToP2);
      }
      
-     projectPoint(point) {
+    projectPoint(point) {
         const a = subtract(point, this.p1);
         const b = subtract(this.p2, this.p1);
         const normB = normalize(b);
@@ -40,7 +40,7 @@ class Segment {
            offset: scaler / magnitude(b),
         };
         return proj;
-     }
+    }
 
     draw(ctx, { width = 2, color = "black", dash = []} = {}) {
         ctx.beginPath();

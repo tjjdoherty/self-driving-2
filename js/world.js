@@ -146,11 +146,12 @@ class World {
             bases.push(new Envelope(seg, this.buildingWidth).poly);
         }
 
+        const eps = 0.001; // some floating point imprecision with spacing that was leaving valid sites for buildings out
         for (let i = 0; i < bases.length; i++) {
             for (let j = i + 1; j < bases.length; j++) {
                 if (
                     bases[i].intersectsPoly(bases[j]) || 
-                    bases[i].distanceToPoly(bases[j]) < this.spacing
+                    bases[i].distanceToPoly(bases[j]) < this.spacing - eps // see const eps a few lines above
                 ) { // checking if base i and j clash with one another, intersectsPoly is in polygon.js
                     bases.splice(j, 1);
                     j--;

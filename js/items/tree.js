@@ -9,7 +9,8 @@ class Tree {
         const points = [];
         const rad = size / 2;
         for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 16) { // looping round the entire circle using 2Pi at an angle, 32 points
-            const noisyRadius = rad * Math.random(); // make some deviation in the radius of the point that is a level of the tree
+            const semiRandom = Math.cos(((angle + this.center.x) * size) % 17) ** 2; // this is a fix for JavaScript to stop the trees refreshing 60 fps, just took from the video
+            const noisyRadius = rad * lerp(0.5, 1, semiRandom); // make some random deviation in the radius using lerp and random - keeps it between 0.5 and 1
             points.push(translate(point, angle, noisyRadius));
         }
         return new Polygon(points); // drawing a new polygon just needs the points, and the polygon.js will create the segments in that file

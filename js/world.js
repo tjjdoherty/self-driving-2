@@ -38,8 +38,8 @@ class World {
 
     #generateTrees() {
         const points = [
-            ...this.roadBorders.map((segment) => [segment.p1, segment.p2]).flat(), 
-            ...this.buildings.map((building) => building.points).flat() // we are using array.map and flat() on segments and buildings to get one giant array of individual points for x and y coordinates
+            ...this.roadBorders.map((segment) => [segment.p1, segment.p2]).flat(), // using array.map and flat() on segments & buildings to get one big array of individual points for x and y coords
+            ...this.buildings.map((building) => building.base.points).flat() // buildings was an array in world.js now it's an object with a base, just like trees
         ];
         const left = Math.min(...points.map((point) => point.x)); // left, right, top and bottom are just finding the absolute max and min x and y values to create a zone where trees...
         const right = Math.max(...points.map((point) => point.x)); // can be randomly placed using the lerp function in the next block (while tryCount) below
@@ -47,7 +47,7 @@ class World {
         const bottom = Math.max(...points.map((point) => point.y));
 
         const illegalPolys = [
-            ...this.buildings,
+            ...this.buildings.map((building) => building.base),
             ...this.envelopes.map((envelope) => envelope.poly)
         ];
 
@@ -159,7 +159,7 @@ class World {
             }
         }
 
-        return bases;
+        return bases.map((base) => new Building(base));
     }
 
     draw(ctx, viewPoint) {
@@ -176,7 +176,7 @@ class World {
             tree.draw(ctx, viewPoint); // we don't need the styles for the tree draw anymore as it's stored within the tree.js file
         }
         for (const building of this.buildings) {
-            building.draw(ctx);
+            building.draw(ctx, viewPoint);
         }
     }
 }

@@ -142,8 +142,8 @@ class World {
         }
 
         const bases = [];
-        for (const seg of supports) {
-            bases.push(new Envelope(seg, this.buildingWidth).poly);
+        for (const seg of supports) { // the supports are just segment lines from which we build the building base polygon around it
+            bases.push(new Envelope(seg, this.buildingWidth).poly); // envelope.poly creates the building base polygon, which then feeds into making the sides and ceiling polygon in building.js
         }
 
         const eps = 0.001; // some floating point imprecision with spacing that was leaving valid sites for buildings out
@@ -172,11 +172,14 @@ class World {
         for (const seg of this.roadBorders) {
             seg.draw(ctx, {color: "white", width: 4 });
         }
-        for (const tree of this.trees) {
-            tree.draw(ctx, viewPoint); // we don't need the styles for the tree draw anymore as it's stored within the tree.js file
-        }
-        for (const building of this.buildings) {
-            building.draw(ctx, viewPoint);
+
+        const items = [...this.buildings, ...this.trees]; // just spread the two arrays into one array and draw buildings/trees together
+        items.sort((a, b) =>
+            b.base.distanceToPoint(viewPoint) -
+            a.base.distanceToPoint(viewPoint)
+        );
+        for (const item of items) {
+            item.draw(ctx, viewPoint);
         }
     }
 }

@@ -49,7 +49,7 @@
                     world.generate();
                     oldGraphHash = graph.hash();
                 }
-                const viewPoint = scale(viewport.getOffset(), -1) // -1 just inverts the view because that parameter just multiplies the x and y of first parameter
+                const viewPoint = scale(viewport.getOffset(), -1) // -1 just inverts the view, multiplies the x and y of first parameter - try changing to +1 and see what happens
                 world.draw(ctx, viewPoint); // we instantiate and draw the world before the graph Editor so that we see the editor tools on top of it
 
                 ctx.globalAlpha = 0.3; // editor tools slightly transparent, so you can still see the graph editor but also the road lane markings underneath them

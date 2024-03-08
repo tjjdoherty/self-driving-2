@@ -6,8 +6,9 @@ class Building {
 
     draw(ctx, viewPoint) {
         const topPoints = this.base.points.map((point) => 
-            add(point, scale(subtract(point, viewPoint), this.heightCoef)) // topPoints just defining the rooftop corners by adding new points, scaled/offset from the viewpoint for the 3d effect
-        );
+            add(point, scale(subtract(point, viewPoint), this.heightCoef * 0.6)) // topPoints just defining the rooftop corners by adding new points, scaled/offset from the viewpoint for the 3d effect
+        );                                                                     // multiplied heightCoef by 0.6 because this is just the top of the side walls, we are adding pointed roofs now (topMidpoints)
+
         const ceiling = new Polygon(topPoints); // then we just create a new polygon with those four points added in the map method
 
         const sides = []; // each sides will be a four sided polygon made up of two points from the base and two from the ceiling
@@ -19,11 +20,41 @@ class Building {
             ]);
             sides.push(poly);
         }
+        sides.sort(
+            (a, b) =>
+            b.distanceToPoint(viewPoint) - // take two polygons (the sides) subtracting the first from the second = reverse order. so the closest ones will be the last ones to draw (overwriting first ones)
+            a.distanceToPoint(viewPoint)
+        );
+
+        const baseMidpoints = [
+            average(this.base.points[0], this.base.points[1]), // find the average point between the two opposing sides of the base polygon
+            average(this.base.points[2], this.base.points[3])
+        ];
+
+        const topMidpoints = baseMidpoints.map((point) => 
+            add(point, scale(subtract(point, viewPoint), this.heightCoef)) // heightCoef is the top of the pointed roofs so the actual highest point now
+        );
+
+        const roofPolys = [
+            new Polygon([
+                ceiling.points[0], ceiling.points[3],
+                topMidpoints[1], topMidpoints[0]
+            ]),
+            new Polygon([
+                ceiling.points[2], ceiling.points[1],
+                topMidpoints[0], topMidpoints[1]
+            ])
+        ]
 
         this.base.draw(ctx, { fill: "white", stroke: "#AAA" });
         for (const side of sides) {
             side.draw(ctx, { fill: "white", stroke: "#AAA" }) // NOTICE - it's ceiling.points and side.draw not THIS.side.draw because side isn't in the constructor / props
         }
         ceiling.draw(ctx, { fill: "white", stroke: "#AAA" });
+        for (const poly of roofPolys) {
+            poly.draw(ctx, { fill: "red", stroke: "#AAA" }) 
+        }
+        // LEARNING - roofPolys.draw didn't work, because you tried to call a draw method on a one-off array just defined above which didn't have a draw method
+        // you needed to for loop through the roofPolys because that lets you access each individual element in the array, which are polygons with a draw method defined (polygon.js).
     }
 }

@@ -45,14 +45,19 @@ class Building {
                 topMidpoints[0], topMidpoints[1]
             ])
         ]
+        roofPolys.sort(
+            (a, b) =>
+            b.distanceToPoint(viewPoint) - // sometimes the roof poly tile at the back was being drawn second - we want the front one drawn last as it's the foreground
+            a.distanceToPoint(viewPoint)
+        );
 
-        this.base.draw(ctx, { fill: "white", stroke: "#AAA" });
+        this.base.draw(ctx, { fill: "white", stroke: "rgba(0,0,0,0.2)", lineWidth: 18 });
         for (const side of sides) {
-            side.draw(ctx, { fill: "white", stroke: "#AAA" }) // NOTICE - it's ceiling.points and side.draw not THIS.side.draw because side isn't in the constructor / props
+            side.draw(ctx, { fill: "white", stroke: "#AAA", lineWidth: 4 }) // NOTICE - it's ceiling.points and side.draw not THIS.side.draw because side isn't in the constructor / props
         }
-        ceiling.draw(ctx, { fill: "white", stroke: "#AAA" });
+        ceiling.draw(ctx, { fill: "white", stroke: "white", lineWidth: 6 });
         for (const poly of roofPolys) {
-            poly.draw(ctx, { fill: "red", stroke: "#AAA" }) 
+            poly.draw(ctx, { fill: "#D44", stroke: "#C44", lineWidth: 8, join: "round" }) 
         }
         // LEARNING - roofPolys.draw didn't work, because you tried to call a draw method on a one-off array just defined above which didn't have a draw method
         // you needed to for loop through the roofPolys because that lets you access each individual element in the array, which are polygons with a draw method defined (polygon.js).

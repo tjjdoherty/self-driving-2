@@ -1,12 +1,12 @@
 class Building {
-    constructor(poly, heightCoef = 0.4) {
+    constructor(poly, height = 200) {
         this.base = poly;
-        this.heightCoef = heightCoef;
+        this.height = height;
     }
 
     draw(ctx, viewPoint) {
         const topPoints = this.base.points.map((point) => 
-            add(point, scale(subtract(point, viewPoint), this.heightCoef * 0.6)) // topPoints just defining the rooftop corners by adding new points, scaled/offset from the viewpoint for the 3d effect
+            getFake3dPoint(point, viewPoint, this.height * 0.6) // topPoints just defining the rooftop corners by adding new points, top of pointed roof is implemented further down
         );                                                                     // multiplied heightCoef by 0.6 because this is just the top of the side walls, we are adding pointed roofs now (topMidpoints)
 
         const ceiling = new Polygon(topPoints); // then we just create a new polygon with those four points added in the map method
@@ -32,7 +32,7 @@ class Building {
         ];
 
         const topMidpoints = baseMidpoints.map((point) => 
-            add(point, scale(subtract(point, viewPoint), this.heightCoef)) // heightCoef is the top of the pointed roofs so the actual highest point now
+            getFake3dPoint(point, viewPoint, this.height) // height is the top of the pointed roofs so the actual highest point now
         );
 
         const roofPolys = [

@@ -31,16 +31,16 @@ function subtract(p1, p2) {
     return new Point(p1.x - p2.x, p1.y - p2.y);
 }
 
-function scale(p, scaler) {
+function scale(p, scaler) { // a vector between 0 and 1 in magnitude
     return new Point(p.x * scaler, p.y * scaler);
 }
 
 function normalize(p) {
-    return scale(p, 1 / magnitude(p));
+    return scale(p, 1 / magnitude(p)); // look at scale immediately above - normalize determines whether its a + or -  in the x or y axis direction e.g. -50 * 1/50, or 100 * 1/100
 }
 
 function magnitude(p) {
-    return Math.hypot(p.x, p.y);
+    return Math.hypot(p.x, p.y); // using pythagorean theorem to find coordinates without the negative sign
 }
 
 function translate(location, angle, offset) {
@@ -87,4 +87,12 @@ function lerp2D(A, B, t) { // this uses lerp to create a 3d effect from a 2d obj
 function getRandomColor() {
     const hue = 290 + Math.random() * 260;
     return "hsl(" + hue + ", 100%, 60%)";
+}
+
+function getFake3dPoint(point, viewPoint, height) { // get the points for top of building side walls, roofs, or trees
+    const dir = normalize(subtract(point, viewPoint)); // we only want the direction of the tree/building relative to viewpoint, so first we normalize
+    const dist = distance(point, viewPoint); // we need the distance between centre of object and viewPoint
+    const scaler = Math.atan(dist / 300) / (Math.PI / 2); // divide arc tangent (half Pi) by half Pi value between 0 and 1 - How much do we scale between 0 (directly above tree) and 1 (tree far away)?
+    
+    return add(point, scale(dir, height * scaler)); 
 }

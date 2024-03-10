@@ -19,13 +19,7 @@ class Tree {
     }
 
     draw(ctx, viewPoint) {
-        const direction = normalize(subtract(this.center, viewPoint)); // normalize this vector to get direction - it's a vector between 0 and 1 in magnitude
-        const dist = distance(this.center, viewPoint); // how much is the tree/cactus is offset? its a 0 -> 1 function telling us how much to contribute, 0 directly above, 1 far away from the side
-        const scaler = Math.atan(dist / 200) / (Math.PI / 2); // arc tangent function given a positive value will output anything between 0 and PI / 2, so divide by PI / 2 and youll get btn 0 and 1.
-        
-        // arc tangent becomes very sensitive at short distances (close to 0 -> 0.5) so we divide dist / 200 to avoid the trees swinging quickly when they are directly over the viewPoint (sensitivity)
-
-        const top = add(this.center, scale(direction, this.height * scaler)) // direction gives us which way to do the scaling, scaler tells us by how much relative to the height
+        const top = getFake3dPoint(this.center, viewPoint, this.height);
 
         const levelCount = 5;
         for (let level = 0; level < levelCount; level++) { // we don't need to draw the center explicitly because the center is just level 0 of this loop

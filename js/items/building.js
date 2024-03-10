@@ -6,7 +6,7 @@ class Building {
 
     draw(ctx, viewPoint) {
         const topPoints = this.base.points.map((point) => 
-            getFake3dPoint(point, viewPoint, this.height * 0.6) // topPoints just defining the rooftop corners by adding new points, top of pointed roof is implemented further down
+            getFake3dPoint(point, viewPoint, this.height * 0.65) // topPoints defines rooftop corners, rooftop slanted polygons implemented further down, 0.65 scales how steep the rooftops are
         );                                                                     // multiplied heightCoef by 0.6 because this is just the top of the side walls, we are adding pointed roofs now (topMidpoints)
 
         const ceiling = new Polygon(topPoints); // then we just create a new polygon with those four points added in the map method

@@ -44,6 +44,9 @@
             const graphEditor = new GraphEditor(viewport, graph); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
 
             let oldGraphHash = graph.hash();
+
+            setMode("graph");
+
             animate(); // replaces the graph draw, calls the graph editor which calls the graph we've already set up
 
             function animate() {
@@ -66,6 +69,30 @@
 
             function save() {
                 localStorage.setItem("graph", JSON.stringify(graph)); // local storage only works with strings.
+            }
+
+            function setMode(mode) {
+                disableEditors();
+                switch (mode) {
+                    case "graph":
+                        graphBtn.style.backgroundColor = "white";
+                        graphBtn.style.filter = "";
+                        graphEditor.enable();
+                        break;
+
+                    case "stop":
+                        stopBtn.style.backgroundColor = "white";
+                        stopBtn.style.filter = "";
+                        break;
+                }
+            } 
+
+            function disableEditors() {
+                graphBtn.style.backgroundColor = "gray";
+                graphBtn.style.filter = "grayscale(100%)";
+                graphEditor.disable();
+                stopBtn.style.backgroundColor = "gray";
+                stopBtn.style.filter = "grayscale(100%)";
             }
 
         </script>

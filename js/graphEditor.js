@@ -11,15 +11,35 @@ class GraphEditor {
         this.dragging = false;
         this.mouse = null;
 
+    }
+
+    enable() {
         this.#addEventListeners();
     }
 
-    #addEventListeners() {
-        this.canvas.addEventListener("mousedown", this.#handleMouseDown.bind(this)); // bind(this) helps keep 'this' in the right place - this refers to the graph editor. without bind here, this refers to myCanvas
-        this.canvas.addEventListener("mousemove", this.#handleMouseMove.bind(this));
+    disable() {
+        this.#removeEventListeners();
+    }
 
-        this.canvas.addEventListener("contextmenu", (event) => event.preventDefault()); // stops the browser right click menu popping up
-        this.canvas.addEventListener("mouseup", () => this.dragging = false); // release the left click button to stop dragging
+    #addEventListeners() {
+        this.boundMouseDown = this.#handleMouseDown.bind(this); // store the binds as attributes, otherwise when using them in remove Event Listener it just creates new methods and won't unbind
+        this.boundMouseMove = this.#handleMouseMove.bind(this);
+        this.boundMouseUp = () => this.dragging = false;
+        this.boundContextMenu = (event) => event.preventDefault();
+
+        this.canvas.addEventListener("mousedown", this.boundMouseDown); // bind(this) helps keep 'this' in the right place - this refers to the graph editor. without bind here, this refers to myCanvas
+        this.canvas.addEventListener("mousemove", this.boundMouseMove);
+
+        this.canvas.addEventListener("mouseup", this.boundMouseUp); // release the left click button to stop dragging
+        this.canvas.addEventListener("contextmenu", this.boundContextMenu); // stops the browser right click menu popping up
+    }
+
+    #removeEventListeners() {
+        this.canvas.removeEventListener("mousedown", this.boundMouseDown); // bind(this) helps keep 'this' in the right place - this refers to the graph editor. without bind here, this refers to myCanvas
+        this.canvas.removeEventListener("mousemove", this.boundMouseMove);
+
+        this.canvas.removeEventListener("mouseup", this.boundMouseUp); // release the left click button to stop dragging
+        this.canvas.removeEventListener("contextmenu", this.boundContextMenu); // stops the browser right click menu popping up
     }
 
     #handleMouseMove(event) {

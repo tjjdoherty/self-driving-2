@@ -9,7 +9,7 @@ class Segment {
     }
 
     directionVector() {
-        return normalize(subtract(this.p2, this.p1)); // we aren't getting magnitude with this, just direction, is it -1 or +1?
+        return normalize(subtract(this.p2, this.p1)); // literally just the modulus of the distance between two points - is this a negative or positive value?
     }
     
     equals(seg) {
@@ -33,7 +33,7 @@ class Segment {
     projectPoint(point) {
         const a = subtract(point, this.p1);
         const b = subtract(this.p2, this.p1);
-        const normB = normalize(b);
+        const normB = normalize(b); // just turns b into a positive (modulus)
         const scaler = dot(a, normB);
         const proj = {
            point: add(this.p1, scale(normB, scaler)),

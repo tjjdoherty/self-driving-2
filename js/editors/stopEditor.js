@@ -19,7 +19,7 @@ class StopEditor {
     }
 
     #addEventListeners() {
-        this.boundMouseDown = this.#handleMouseDown.bind(this); // need to store the binds as attributes, otherwise this.#method.bind(this) just creates a new copy in the remove listener method
+        this.boundMouseDown = this.#handleMouseDown.bind(this); // need to store the binds as attributes, otherwise in remove listener, this.#method.bind(this) creates a unique copy, doesn't remove
         this.boundMouseMove = this.#handleMouseMove.bind(this);
         this.boundContextMenu = (event) => event.preventDefault();
 
@@ -29,9 +29,9 @@ class StopEditor {
     }
 
     #removeEventListeners() {
-        this.canvas.removeEventListener("mousedown", this.boundMouseDown); // bind(this) helps keep 'this' in the right place - this refers to the graph editor. without bind here, this refers to myCanvas
+        this.canvas.removeEventListener("mousedown", this.boundMouseDown);
         this.canvas.removeEventListener("mousemove", this.boundMouseMove);
-        this.canvas.removeEventListener("contextmenu", this.boundContextMenu); // stops the browser right click menu popping up
+        this.canvas.removeEventListener("contextmenu", this.boundContextMenu);
     }
 
     #handleMouseMove(event) { // this method will snap a stop sign to the road segments - much easier than trying to manually put it in exact the right angle on the roads
@@ -39,14 +39,24 @@ class StopEditor {
         const seg = getNearestSegment(
             this.mouse,
             this.world.graph.segments, // segments is in graph which is in world which is supplied to stopEditor constructor
-            14 * this.viewport.zoom
+            15 * this.viewport.zoom // 15 is the threshold - a larger value will make it snap onto something from further away
         );
         if (seg) {
-            this.intent = seg;
-        } else {
-            this.intent = null;
+            const proj = seg.projectPoint(this.mouse);
+            if (proj.offset >= 0 && proj.offset <= 1) {
+                this.intent = new Stop( // the hover over will project a new Stop sign - what does it need?? the point location, the direction vector (which side of the road), road Width
+                    proj.point,
+                    seg.directionVector(),
+                    world.roadWidth,
+                    world.roadWidth / 2
+                );
+            } else {
+                this.intent = null;
+            }
+            } else {
+                this.intent = null;
+            }
         }
-    }
 
     #handleMouseDown(event) {
 

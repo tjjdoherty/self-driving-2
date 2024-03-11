@@ -17,6 +17,7 @@
 
         <script src="js/world.js"></script>
         <script src="js/viewport.js"></script>
+        <script src="js/markings/stop.js"></script>
         <script src="js/editors/graphEditor.js"></script>
         <script src="js/editors/stopEditor.js"></script>
         <script src="js/items/tree.js"></script>
@@ -75,7 +76,7 @@
             }
 
             function setMode(mode) {
-                disableEditors();
+                disableEditors(); // immediately disable all editors except the one that got clicked - one of a few select cases, use a switch statement
                 switch (mode) {
                     case "graph":
                         graphBtn.style.backgroundColor = "white";

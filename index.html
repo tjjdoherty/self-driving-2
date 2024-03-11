@@ -16,8 +16,9 @@
         </div>
 
         <script src="js/world.js"></script>
-        <script src="js/graphEditor.js"></script>
         <script src="js/viewport.js"></script>
+        <script src="js/editors/graphEditor.js"></script>
+        <script src="js/editors/stopEditor.js"></script>
         <script src="js/items/tree.js"></script>
         <script src="js/items/building.js"></script>
         <script src="js/math/utils.js"></script>
@@ -42,6 +43,7 @@
 
             const viewport = new Viewport(myCanvas);
             const graphEditor = new GraphEditor(viewport, graph); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
+            const stopEditor = new StopEditor(viewport, world); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
 
             let oldGraphHash = graph.hash();
 
@@ -60,6 +62,7 @@
 
                 ctx.globalAlpha = 0.3; // editor tools slightly transparent, so you can still see the graph editor but also the road lane markings underneath them
                 graphEditor.display();
+                stopEditor.display();
                 requestAnimationFrame(animate); // refreshes the animation 60 fps - the canvas is constantly re-rendering
             }
 
@@ -83,6 +86,7 @@
                     case "stop":
                         stopBtn.style.backgroundColor = "white";
                         stopBtn.style.filter = "";
+                        stopEditor.enable();
                         break;
                 }
             } 
@@ -93,6 +97,7 @@
                 graphEditor.disable();
                 stopBtn.style.backgroundColor = "gray";
                 stopBtn.style.filter = "grayscale(100%)";
+                stopEditor.disable();
             }
 
         </script>

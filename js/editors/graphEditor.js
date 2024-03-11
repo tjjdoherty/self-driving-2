@@ -19,10 +19,12 @@ class GraphEditor {
 
     disable() {
         this.#removeEventListeners();
+        this.selected = false;
+        this.hovered = false;
     }
 
     #addEventListeners() {
-        this.boundMouseDown = this.#handleMouseDown.bind(this); // store the binds as attributes, otherwise when using them in remove Event Listener it just creates new methods and won't unbind
+        this.boundMouseDown = this.#handleMouseDown.bind(this); // need to store the binds as attributes, otherwise this.#method.bind(this) just creates a new copy in the remove listener method
         this.boundMouseMove = this.#handleMouseMove.bind(this);
         this.boundMouseUp = () => this.dragging = false;
         this.boundContextMenu = (event) => event.preventDefault();

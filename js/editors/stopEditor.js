@@ -38,7 +38,7 @@ class StopEditor {
         this.mouse = this.viewport.getMouse(event);
         const seg = getNearestSegment(
             this.mouse,
-            this.world.graph.segments, // segments is in graph which is in world which is supplied to stopEditor constructor
+            this.world.laneGuides,
             15 * this.viewport.zoom // 15 is the threshold - a larger value will make it snap onto something from further away
         );
         if (seg) {
@@ -47,11 +47,9 @@ class StopEditor {
                 this.intent = new Stop( // the hover over will project a new Stop sign - what does it need?? the point location, the direction vector (which side of the road), road Width
                     proj.point,
                     seg.directionVector(),
-                    world.roadWidth,
+                    world.roadWidth / 2,
                     world.roadWidth / 2
                 );
-            } else {
-                this.intent = null;
             }
             } else {
                 this.intent = null;

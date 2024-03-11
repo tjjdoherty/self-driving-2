@@ -19,6 +19,7 @@ class World {
         this.roadBorders = [];
         this.buildings = [];
         this.trees = [];
+        this.laneGuides = [];
 
         this.generate();
     }
@@ -34,6 +35,25 @@ class World {
         this.roadBorders = Polygon.union(this.envelopes.map((envelope) => envelope.poly));
         this.buildings = this.#generateBuildings();
         this.trees = this.#generateTrees();
+
+        this.laneGuides.length = 0; // clear out any old guides from previous renderings - refreshing at 60fps
+        this.laneGuides.push(...this.#generateLaneGuides()); // push individually with ...
+
+    }
+
+    #generateLaneGuides() {
+        const tmpEnvelopes = [];
+        for (const seg of this.graph.segments) {
+            tmpEnvelopes.push(
+                new Envelope(
+                    seg,
+                    this.roadWidth / 2, // this envelope is for a stop sign on one side of the road for traffic, so it just needs one side of the road (half roadwidth)
+                    this.roadRoundness
+                )
+            );
+        }
+        const segments = Polygon.union(tmpEnvelopes.map((envelope) => envelope.poly)); // union breaks polygons into segments and only returns what doesn't intersect
+        return segments; // we are returning the segments of the polygons from the envelopes
     }
 
     #generateTrees() {
@@ -181,5 +201,6 @@ class World {
         for (const item of items) {
             item.draw(ctx, viewPoint);
         }
+        
     }
 }

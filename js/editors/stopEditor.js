@@ -1,85 +1,19 @@
-class StopEditor {
+class StopEditor extends MarkingEditor {
     constructor(viewport, world) {
-        this.viewport = viewport;
-        this.world = world; // store the viewport and world as object attributes
-
-        this.canvas = viewport.canvas;
-        this.ctx = this.canvas.getContext("2d"); // same constructor stuff as the graph Editor
-
-        this.mouse = null;
-        this.intent = null;
-
-        this.markings = world.markings;
+        super(viewport, world, world.laneGuides); 
+        /* 
+        By adding extends Marking Editor all constructor and methods of StopEditor isn't needed anymore, it's all housed in MarkingEditor and inherited from there
+        We just overwrite the create marking that's unique to Stop
+        */
     }
 
-    enable() {
-        this.#addEventListeners();
-    }
-
-    disable() {
-        this.#removeEventListeners();
-    }
-
-    #addEventListeners() {
-        this.boundMouseDown = this.#handleMouseDown.bind(this); // need to store the binds as attributes, otherwise in remove listener, this.#method.bind(this) creates a unique copy, doesn't remove
-        this.boundMouseMove = this.#handleMouseMove.bind(this);
-        this.boundContextMenu = (event) => event.preventDefault();
-
-        this.canvas.addEventListener("mousedown", this.boundMouseDown); // bind(this) helps keep 'this' in the right place - this refers to the graph editor. without bind here, this refers to myCanvas
-        this.canvas.addEventListener("mousemove", this.boundMouseMove);
-        this.canvas.addEventListener("contextmenu", this.boundContextMenu); // stops the browser right click menu popping up
-    }
-
-    #removeEventListeners() {
-        this.canvas.removeEventListener("mousedown", this.boundMouseDown);
-        this.canvas.removeEventListener("mousemove", this.boundMouseMove);
-        this.canvas.removeEventListener("contextmenu", this.boundContextMenu);
-    }
-
-    #handleMouseMove(event) { // this method will snap a stop sign to the road segments - much easier than trying to manually put it in exact the right angle on the roads
-        this.mouse = this.viewport.getMouse(event);
-        const seg = getNearestSegment(
-            this.mouse,
-            this.world.laneGuides,
-            15 * this.viewport.zoom // 15 is the threshold - a larger value will make it snap onto something from further away
+    createMarking(center, directionVector) {
+        return new Stop(
+            center,
+            directionVector,
+            world.roadWidth / 2,
+            world.roadWidth / 2
         );
-        if (seg) {
-            const proj = seg.projectPoint(this.mouse);
-            if (proj.offset >= 0 && proj.offset <= 1) {
-                this.intent = new Stop( // the hover over will project a new Stop sign - what does it need?? the point location, the direction vector (which side of the road), road Width
-                    proj.point,
-                    seg.directionVector(),
-                    world.roadWidth / 2,
-                    world.roadWidth / 2
-                );
-            }
-            } else {
-                this.intent = null;
-            }
-        }
-
-    #handleMouseDown(event) {
-        if (event.button == 0) { // click button 0 is left click
-            if (this.intent) {
-                this.markings.push(this.intent);
-                this.intent = null;
-            }
-        }
-        if (event.button == 2) { // right click
-            for (let i = 0; i < this.markings.length; i++) {
-                const poly = this.markings[i].poly; // because markings comes from this.intent which is from stop which is from the poly method of an envelope (create a polygon)
-                if (poly.containsPoint(this.mouse)) {
-                    this.markings.splice(i, 1);
-                    return;
-                }
-            }
-        }
-    }
-
-    display() {
-        if (this.intent) {
-            this.intent.draw(this.ctx);
-        }
     }
 
 }

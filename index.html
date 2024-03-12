@@ -18,8 +18,10 @@
 
         <script src="js/world.js"></script>
         <script src="js/viewport.js"></script>
+        <script src="js/markings/marking.js"></script>
         <script src="js/markings/stop.js"></script>
         <script src="js/markings/crossing.js"></script>
+        <script src="js/editors/markingEditor.js"></script>
         <script src="js/editors/graphEditor.js"></script>
         <script src="js/editors/stopEditor.js"></script>
         <script src="js/editors/crossingEditor.js"></script>
@@ -46,9 +48,12 @@
             const world = new World(graph);
 
             const viewport = new Viewport(myCanvas);
-            const graphEditor = new GraphEditor(viewport, graph); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
-            const stopEditor = new StopEditor(viewport, world); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
-            const crossingEditor = new CrossingEditor(viewport, world);
+
+            const tools = {
+                graph: { button: graphBtn, editor: new GraphEditor(viewport, graph) }, // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
+                stop: { button: stopBtn, editor: new StopEditor(viewport, world) },
+                crossing: { button: crossingBtn, editor: new CrossingEditor(viewport, world) }
+            }
 
             let oldGraphHash = graph.hash();
 
@@ -66,14 +71,16 @@
                 world.draw(ctx, viewPoint); // we instantiate and draw the world before the graph Editor so that we see the editor tools on top of it
 
                 ctx.globalAlpha = 0.3; // editor tools slightly transparent, so you can still see the graph editor but also the road lane markings underneath them
-                graphEditor.display();
-                stopEditor.display();
-                crossingEditor.display();
+                
+                for (const tool of Object.values(tools)) { // see tools object above, saves us lines of code when many more editors are included, and saves you forgetting to add the new editor manually
+                    tool.editor.display();
+                }
+                
                 requestAnimationFrame(animate); // refreshes the animation 60 fps - the canvas is constantly re-rendering
             }
 
             function dispose() {
-                graphEditor.dispose();
+                tools["graph"].editor.dispose(); // just hard code the tools graph for now as it disposes everything - including stops and crossings
                 world.markings.length = 0;
             }
 
@@ -82,40 +89,19 @@
             }
 
             function setMode(mode) {
-                disableEditors(); // immediately disable all editors except the one that got clicked - one of a few select cases, use a switch statement
-                switch (mode) {
-                    case "graph":
-                        graphBtn.style.backgroundColor = "white";
-                        graphBtn.style.filter = "";
-                        graphEditor.enable();
-                        break;
-
-                    case "stop":
-                        stopBtn.style.backgroundColor = "white";
-                        stopBtn.style.filter = "";
-                        stopEditor.enable();
-                        break;
-
-                    case "crossing":
-                        crossingBtn.style.backgroundColor = "white";
-                        crossingBtn.style.filter = "";
-                        crossingEditor.enable();
-                        break;
-                }
+                disableEditors(); // we don't need the switch statement anymore as the tools object can be accessed through setMode (called with onClick)
+                tools[mode].button.style.backgroundColor = "white";
+                tools[mode].button.style.filter = "";
+                tools[mode].editor.enable();
             } 
 
             function disableEditors() {
-                graphBtn.style.backgroundColor = "gray";
-                graphBtn.style.filter = "grayscale(100%)";
-                graphEditor.disable();
-                stopBtn.style.backgroundColor = "gray";
-                stopBtn.style.filter = "grayscale(100%)";
-                stopEditor.disable();
-                crossingBtn.style.backgroundColor = "gray";
-                crossingBtn.style.filter = "grayscale(100%)";
-                crossingEditor.disable();
+                for (const tool of Object.values(tools)) { // see tools object above, saves us lines of code when many more editors are included, and saves you forgetting to add the new editor manually
+                    tool.editor.disable();
+                    tool.button.style.backgroundColor = "gray";
+                    tool.button.style.filter = "grayscale(100%)";
+                }
             }
-
         </script>
     </body>
 </html>

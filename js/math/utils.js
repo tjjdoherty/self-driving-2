@@ -56,6 +56,10 @@ function magnitude(p) {
     return Math.hypot(p.x, p.y); // using pythagorean theorem to find coordinates without the negative sign
 }
 
+function perpendicular(point) {
+    return new Point(-point.y, point.x); // try this for 2 coords - original x coord becomes -y and original y becomes x, do it with two points makes the line perpendicular
+}
+
 function translate(location, angle, offset) {
     return new Point(
         location.x + Math.cos(angle) * offset, // this is the trigonometric circle, with x coordinate we use cosine

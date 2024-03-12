@@ -1,10 +1,10 @@
-class StopEditor {
+class CrossingEditor { // this is nearly a copy of the StopEditor with some important differences
     constructor(viewport, world) {
         this.viewport = viewport;
-        this.world = world; // store the viewport and world as object attributes
+        this.world = world;
 
         this.canvas = viewport.canvas;
-        this.ctx = this.canvas.getContext("2d"); // same constructor stuff as the graph Editor
+        this.ctx = this.canvas.getContext("2d");
 
         this.mouse = null;
         this.intent = null;
@@ -27,7 +27,7 @@ class StopEditor {
 
         this.canvas.addEventListener("mousedown", this.boundMouseDown); // bind(this) helps keep 'this' in the right place - this refers to the graph editor. without bind here, this refers to myCanvas
         this.canvas.addEventListener("mousemove", this.boundMouseMove);
-        this.canvas.addEventListener("contextmenu", this.boundContextMenu); // stops the browser right click menu popping up
+        this.canvas.addEventListener("contextmenu", this.boundContextMenu);
     }
 
     #removeEventListeners() {
@@ -36,21 +36,21 @@ class StopEditor {
         this.canvas.removeEventListener("contextmenu", this.boundContextMenu);
     }
 
-    #handleMouseMove(event) { // this method will snap a stop sign to the road segments - much easier than trying to manually put it in exact the right angle on the roads
+    #handleMouseMove(event) { // snap a crossing to the road segment
         this.mouse = this.viewport.getMouse(event);
         const seg = getNearestSegment(
             this.mouse,
-            this.world.laneGuides,
+            this.world.graph.segments,
             15 * this.viewport.zoom // 15 is the threshold - a larger value will make it snap onto something from further away
         );
         if (seg) {
             const proj = seg.projectPoint(this.mouse);
             if (proj.offset >= 0 && proj.offset <= 1) {
-                this.intent = new Stop( // the hover over will project a new Stop sign - what does it need?? the point location, the direction vector (which side of the road), road Width
+                this.intent = new Crossing(
                     proj.point,
                     seg.directionVector(),
-                    world.roadWidth / 2,
-                    world.roadWidth / 2
+                    world.roadWidth, // for crossings, the entire roadwidth is needed - not only half like stop signs
+                    world.roadWidth / 2 // this is height of the polygon
                 );
             }
             } else {

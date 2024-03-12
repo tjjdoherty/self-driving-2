@@ -13,13 +13,16 @@
             &nbsp;
             <button id="graphBtn" onClick="setMode('graph')">📈</button>
             <button id="stopBtn" onClick="setMode('stop')">🛑</button>
+            <button id="crossingBtn" onClick="setMode('crossing')">🚶‍♂️</button>
         </div>
 
         <script src="js/world.js"></script>
         <script src="js/viewport.js"></script>
         <script src="js/markings/stop.js"></script>
+        <script src="js/markings/crossing.js"></script>
         <script src="js/editors/graphEditor.js"></script>
         <script src="js/editors/stopEditor.js"></script>
+        <script src="js/editors/crossingEditor.js"></script>
         <script src="js/items/tree.js"></script>
         <script src="js/items/building.js"></script>
         <script src="js/math/utils.js"></script>
@@ -45,6 +48,7 @@
             const viewport = new Viewport(myCanvas);
             const graphEditor = new GraphEditor(viewport, graph); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
             const stopEditor = new StopEditor(viewport, world); // the graph editor needs to know about the viewport and the graph, not the canvas - canvas is the viewport's job
+            const crossingEditor = new CrossingEditor(viewport, world);
 
             let oldGraphHash = graph.hash();
 
@@ -64,11 +68,13 @@
                 ctx.globalAlpha = 0.3; // editor tools slightly transparent, so you can still see the graph editor but also the road lane markings underneath them
                 graphEditor.display();
                 stopEditor.display();
+                crossingEditor.display();
                 requestAnimationFrame(animate); // refreshes the animation 60 fps - the canvas is constantly re-rendering
             }
 
             function dispose() {
                 graphEditor.dispose();
+                world.markings.length = 0;
             }
 
             function save() {
@@ -89,6 +95,12 @@
                         stopBtn.style.filter = "";
                         stopEditor.enable();
                         break;
+
+                    case "crossing":
+                        crossingBtn.style.backgroundColor = "white";
+                        crossingBtn.style.filter = "";
+                        crossingEditor.enable();
+                        break;
                 }
             } 
 
@@ -99,6 +111,9 @@
                 stopBtn.style.backgroundColor = "gray";
                 stopBtn.style.filter = "grayscale(100%)";
                 stopEditor.disable();
+                crossingBtn.style.backgroundColor = "gray";
+                crossingBtn.style.filter = "grayscale(100%)";
+                crossingEditor.disable();
             }
 
         </script>

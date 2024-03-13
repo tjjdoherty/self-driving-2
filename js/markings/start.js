@@ -13,7 +13,7 @@ class Start extends Marking { // stop is going to be a polygon that sits on top 
         ctx.translate(this.center.x, this.center.y);
         ctx.rotate(angle(this.directionVector) - Math.PI / 2); // subtract half Pi = 90 degrees rotation, for driving on the RHS. Make it + for driving on LHS :)
 
-        ctx.drawImage(this.img, -this.width / 2 * scale, -this.height / 2 * scale, this.width * scale, this.height * scale); // default canvas sets image start at top left corner so we offset by half its' width and height to go down the centre of the img
+        ctx.drawImage(this.img, -this.width / 2 * scale, -this.height / 2, this.width * scale, this.height); // used scale to bring the width of the car.js image in, it is an appropriate size now
         ctx.restore();
     }
 

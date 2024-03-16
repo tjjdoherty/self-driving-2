@@ -1,25 +1,44 @@
-class Light extends Marking { // stop is going to be a polygon that sits on top of the road
+class Light extends Marking {
     constructor(center, directionVector, width, height) {
-        super(center, directionVector, width, height);
+        super(center, directionVector, width, 20);
 
-        this.border = this.poly.segments[2]; // this is the top border of the polygon drawn - the stopping line cars must stop before!
+        this.state = "green";
+
+        this.border = this.poly.segments[0]; // we are defining this border, [0] is the bottom border - cars must stop here when they detect it in the simulation!
     }
 
     draw(ctx) {
-        this.border.draw(ctx, { width: 5, color: "white" });
-        ctx.save();
-        ctx.translate(this.center.x, this.center.y);
-        ctx.rotate(angle(this.directionVector) - Math.PI / 2); // subtract half Pi = 90 degrees rotation, for driving on the RHS. Make it + for driving on LHS :)
-        ctx.scale(1, 3); // ctx scale takes x and y coords - y is 3 to stretch it vertically like the stop writing you see on roads in real life
+        const perp = perpendicular(this.directionVector);
+        const line = new Segment(
+            add(this.center, scale(perp, this.width / 2)),
+            add(this.center, scale(perp, -this.width / 2))
+        );
 
-        ctx.beginPath();
-        ctx.textBaseline = "middle";
-        ctx.textAlign = "center";
-        ctx.fillStyle = "white";
-        ctx.font = "bold " + this.height * 0.3 + "px Arial";
-        ctx.fillText("L", 0, 1); // 0,1 are coordinates of where to put the fill text but we translate/rotate/scaled above, so nothing here just 1 in y for very slight adjustment/offset.
+        const green = lerp2D(line.p1, line.p2, 0.2); // 0.2 just makes the green light appear at 20% of the way through the polygon
+        const yellow = lerp2D(line.p1, line.p2, 0.5);
+        const red = lerp2D(line.p1, line.p2, 0.8);
 
-        ctx.restore();
+
+        new Segment(red, green).draw(ctx, { // you can create new instances of primitives eg segment like this, red -> green with lineCap rounds off the traffic lights and doesn't over extend them
+            width: this.height,
+            cap: "round"
+        });
+
+        green.draw(ctx, { size: this.height * 0.6, color: "#060" }); // dark green - light out
+        yellow.draw(ctx, { size: this.height * 0.6, color: "#660" }); // dark yellow - light out
+        red.draw(ctx, { size: this.height * 0.6, color: "#600" }); // dark red - light out
+
+        switch (this.state) {
+            case "green":
+                green.draw(ctx, { size: this.height * 0.6, color: "#0F0" });
+                break;
+            case "yellow":
+                yellow.draw(ctx, { size: this.height * 0.6, color: "#FF0" });
+                break;
+            case "red":
+                red.draw(ctx, { size: this.height * 0.6, color: "#F00" });
+                break;
+        }
     }
 
 }

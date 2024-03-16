@@ -185,6 +185,23 @@ class World {
         return bases.map((base) => new Building(base));
     }
 
+    #getIntersections() {
+        const subset = [];
+        for (const point of this.graph.points) {
+            let degree = 0;
+            for (const seg of this.graph.segments) {
+                if (seg.includes(point)) {
+                    degree++;
+                }
+            }
+
+            if (degree > 2) {
+                subset.push(point);
+            }
+        }
+        return subset;
+    }
+
     #updateLights() {
         // frameCount to be updated here as the lights are the only thing that needs a constant time cycle of any sort.
         const lights = this.markings.filter(marking => marking instanceof Light);
@@ -192,7 +209,7 @@ class World {
         const controlCenters = [];
 
         for (const light of lights) {
-            const point = getNearestPoint(light.center, this.graph.points);
+            const point = getNearestPoint(light.center, this.#getIntersections());
             let controlCenter = controlCenters.find(cc => cc.equals(point))
             if (!controlCenter) {
                 controlCenter = new Point(point.x, point.y);

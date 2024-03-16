@@ -2,7 +2,7 @@ class Light extends Marking {
     constructor(center, directionVector, width, height) {
         super(center, directionVector, width, 20);
 
-        this.state = "green";
+        this.state = "out";
 
         this.border = this.poly.segments[0]; // we are defining this border, [0] is the bottom border - cars must stop here when they detect it in the simulation!
     }

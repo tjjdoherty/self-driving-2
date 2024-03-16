@@ -22,6 +22,8 @@ class World {
         this.laneGuides = [];
         this.markings = [];
 
+        this.frameCount = 0;
+
         this.generate();
     }
 
@@ -183,7 +185,51 @@ class World {
         return bases.map((base) => new Building(base));
     }
 
+    #updateLights() {
+        // frameCount to be updated here as the lights are the only thing that needs a constant time cycle of any sort.
+        const lights = this.markings.filter(marking => marking instanceof Light);
+        
+        const controlCenters = [];
+
+        for (const light of lights) {
+            const point = getNearestPoint(light.center, this.graph.points);
+            let controlCenter = controlCenters.find(cc => cc.equals(point))
+            if (!controlCenter) {
+                controlCenter = new Point(point.x, point.y);
+                controlCenter.lights = [light];
+                controlCenters.push(controlCenter);
+            } else {
+                controlCenter.lights.push(light);
+            }
+        }
+
+        const greenDuration = 3, yellowDuration = 1;
+        for (const center of controlCenters) {
+        center.ticks = center.lights.length*(greenDuration + yellowDuration);
+        }
+
+        const tick = Math.floor(this.frameCount / 60);
+        for (const center of controlCenters) {
+            const cTick = tick % center.ticks;
+            const greenYellowIndex = Math.floor(cTick / (greenDuration + yellowDuration));
+            const greenYellowState = cTick % (greenDuration + yellowDuration) < greenDuration 
+                ? "green" 
+                : "yellow";
+
+            for (let i = 0; i < center.lights.length; i++) {
+                if (i == greenYellowIndex) {
+                    center.lights[i].state = greenYellowState;
+                } else {
+                    center.lights[i].state = "red";
+                }
+            }
+        }
+        this.frameCount++;
+    }
+
     draw(ctx, viewPoint) {
+        this.#updateLights();
+
         for (const env of this.envelopes) {
             env.draw(ctx, { fill: "#BBB", stroke: "#BBB", lineWidth: 15 });
         }

@@ -11,6 +11,7 @@ class GraphEditor {
         this.dragging = false;
         this.mouse = null;
 
+        this.dragStartPosition = null;
     }
 
     enable() {
@@ -26,7 +27,10 @@ class GraphEditor {
     #addEventListeners() {
         this.boundMouseDown = this.#handleMouseDown.bind(this); // need to store the binds as attributes, otherwise this.#method.bind(this) just creates a new copy in the remove listener method
         this.boundMouseMove = this.#handleMouseMove.bind(this);
-        this.boundMouseUp = () => this.dragging = false;
+        this.boundMouseUp = () => {
+            this.dragging = false
+            // do i want to add a behaviour that stops the try add point if I've just finished dragging?
+        };
         this.boundContextMenu = (event) => event.preventDefault();
 
         this.canvas.addEventListener("mousedown", this.boundMouseDown); // bind(this) helps keep 'this' in the right place - this refers to the graph editor. without bind here, this refers to myCanvas
